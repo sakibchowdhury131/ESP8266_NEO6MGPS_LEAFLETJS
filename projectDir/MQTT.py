@@ -6,7 +6,7 @@ port = 1883
 topic = "#"
 client_id = '#test_ID_remote_admin_2'
 username = 'sakib'
-password = 'hd85512b'
+password = 'enteryourpass'
 
 
 def connect_mqtt() -> mqtt_client:
