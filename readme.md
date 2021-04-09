@@ -8,4 +8,6 @@
 - projectDir
     - Contains the python scripts 
     - install paho-mqtt and gmplot
-    - run MQTT_Rec_GMAP.py
+    - install postgres 
+    - check the requirement.txt file to setup the virtual environment
+    - run django server
