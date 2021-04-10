@@ -6,7 +6,7 @@
     	- Change the MQTT host address, usename and password.
     	- You can use any MQTT broker such as adafruit_io or mosquitto CLI
 
-- projectDir
+- djangoServer
 	-	
     	- Contains the python scripts 
     	- install paho-mqtt and gmplot
