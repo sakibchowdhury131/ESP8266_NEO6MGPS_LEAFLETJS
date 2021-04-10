@@ -13,3 +13,6 @@
     	- install postgres 
     	- check the requirement.txt file to setup the virtual environment
     	- run django server
+- djangoServer/MapHandler/MQTT_filewrite/MQTTRec.py
+	-
+	- run in a separate terminal/power shell to listen to the messages coming from ESP8266 and add them to the database
