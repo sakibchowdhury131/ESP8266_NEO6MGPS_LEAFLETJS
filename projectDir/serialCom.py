@@ -1,5 +1,5 @@
 import serial
-ser = serial.Serial('/dev/ttyUSB1', 115200)
+ser = serial.Serial('/dev/ttyUSB0', 115200)
 ser.flushInput()
 
 while True:

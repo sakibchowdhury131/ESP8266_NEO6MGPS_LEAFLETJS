@@ -1,5 +1,6 @@
 #include <TinyGPS++.h>
 #include <ArduinoJson.h>
+#include <LiquidCrystal.h>
 
 #define HOME_LAT 23.45
 #define HOME_LNG 91.18
@@ -10,6 +11,8 @@ float latitude, longitude, distance, alt;
 uint16_t flag = 0;
 
 TinyGPSPlus gps;
+const int rs = PA6, en = PA5, d4 = PA4, d5 = PA1, d6 = PA0, d7 = PC15; //STM32 Pins to which LCD is connected
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7); //Initialize the LCD
 
 
 void setup(){
@@ -19,7 +22,12 @@ void setup(){
   while (!Serial2) continue;
   Serial3.begin(ESPBaud);   // GPS Serial
   while (!Serial3) continue;
+  lcd.begin(16, 2);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Setup Done");
   Serial1.println("Setup: ------------------------------> DONE");
+  delay(1000);
 
 }
 
@@ -43,6 +51,8 @@ void loop(){
         Serial1.print(alt, 6);
         Serial1.print(F(","));
         Serial1.println(distance, 6);
+        
+        
 
         flag++; 
 
@@ -56,13 +66,26 @@ void loop(){
           doc["distance"] = distance;
           serializeJson(doc, Serial3);
           Serial1.println("JSON msg sent");
+          //lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("Lats: ");
+          lcd.print(latitude,6);
+          lcd.print("N");
+          lcd.setCursor(0, 1);
+          lcd.print("Lngs: ");
+          lcd.print(longitude, 6);
+          lcd.print("E");
         }
 
 
       } else {
         Serial1.println("INVALID");
+        lcd.setCursor(0,0);
+        lcd.print("Location Invalid");
       }
 
     } 
   }
+
+  
 }
