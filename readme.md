@@ -1,4 +1,4 @@
-# GPS location plot Google Maps API
+# GPS location plot Leaflet MAPS JS
 
 ## File Structure
 
