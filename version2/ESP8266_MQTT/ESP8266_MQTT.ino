@@ -1,31 +1,34 @@
-#include <SoftwareSerial.h>
 #include <ArduinoJson.h>
 #include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_Client.h>
-#include <ESP8266WiFi.h>
-
-static const int RXPin = 13, TXPin = 15;
-static const uint16_t STM32Baud = 9600;
+#include <WiFi.h>
 double latitude, longitude, distance, alt;
 char gpsbuffer[40];
 
-SoftwareSerial ss(RXPin, TXPin);
+
 
 /************************************************************************************/
 /***************************** Defining Wifi ****************************************/
 /************************************************************************************/
 
-#define     SSID    "UnknownDevice"
+#define     SSID    "NoNetwork"
 #define     PASS    "sakibtuhinnitu"
+
+
+
+
 
 /************************************************************************************/
 /***************************** MQTT params ******************************************/
 /************************************************************************************/
 
-#define     HOST    "192.168.1.11"
+#define     HOST    "test.mosquitto.org"
 #define     PORT    1883
 #define     USRNAME "sakib"
 #define     KEY     "nopass"
+
+
+
 
 
 /***********************************************************************************/
@@ -49,10 +52,11 @@ Adafruit_MQTT_Publish _gps_lat_lng = Adafruit_MQTT_Publish(&mqtt, USRNAME"/feeds
 /***********************************************************************************/
 
 void MQTT_connect(){
-    int8_t ret;
     if (mqtt.connected()) {
     return;
     }
+
+    int8_t ret;
     Serial.print("Connecting to MQTT... ");
 
     uint8_t retries = 3;
@@ -68,18 +72,20 @@ void MQTT_connect(){
         }
     }
     Serial.println("MQTT Connected!");
+    StaticJsonDocument<400> temp;
+    temp["WiFi_status"] = 1;
+    temp["MQTT_status"] = 1;
+    serializeJson(temp, Serial2);
+    Serial.println("Status sent"); 
 }
 
 
 
 
-
-void setup(){
+void setup() {
+  // put your setup code here, to run once:
   Serial.begin(115200);
-  while (!Serial) continue;
-
-  ss.begin(STM32Baud);
-  while (!ss) continue;
+  Serial2.begin(115200);
 
   Serial.println("Setup Started... ");
 
@@ -95,21 +101,23 @@ void setup(){
 
   Serial.println(" ");
   Serial.println("WiFi connected");
+  StaticJsonDocument<400> temp;
+  temp["WiFi_status"] = 1;
+  temp["MQTT_status"] = 0;
+  serializeJson(temp, Serial2);
+  Serial.println("Status sent"); 
   Serial.println("IP address: "); Serial.println(WiFi.localIP());
 
   Serial.println("Setup Done ... ");
 
 }
 
-
-void loop(){
-
+void loop() {
+  // put your main code here, to run repeatedly:
   MQTT_connect();
-  if (ss.available()){
-    //Serial.write(ss.read());
-    
+  if (Serial2.available()){
     StaticJsonDocument<500> doc;
-    DeserializationError err = deserializeJson(doc, ss);
+    DeserializationError err = deserializeJson(doc, Serial2);
 
 
     if (err == DeserializationError::Ok){
@@ -148,6 +156,7 @@ void loop(){
 
       Serial.println(gpsbuffer);
 
+
       Serial.println("sending GPS co-ordinates...");
       if (! _gps_lat.publish(latitude)) {
           Serial.println(F("GPS_latitude--------------------- FAILED"));
@@ -167,17 +176,7 @@ void loop(){
           Serial.println(F("GPS_data--------------------- OK"));
       }
 
+  }
 
-      Serial.println(" ");
-      Serial.println(" ");
-      
-    } else {
-      Serial.print("deserializeJson() returned ");
-      Serial.println(err.c_str());
-      // Flush all bytes in the "link" serial port buffer
-      while (ss.available() > 0)
-          ss.read();
-    }
-   
-  } 
+}
 }

@@ -6,7 +6,7 @@
 #define HOME_LNG 91.18
 static const uint32_t GPSBaud = 9600;
 static const uint32_t COMPORTBaud = 115200;
-static const uint32_t ESPBaud = 9600;
+static const uint32_t ESPBaud = 115200;
 float latitude, longitude, distance, alt;
 uint16_t flag = 0;
 
@@ -85,6 +85,33 @@ void loop(){
       }
 
     } 
+  }
+
+  if (Serial3.available()){
+    StaticJsonDocument<500> esp_status;
+    DeserializationError err = deserializeJson(esp_status, Serial3);
+
+    if (err == DeserializationError::Ok){
+      int wifiConnected = esp_status["WiFi_status"].as<int>();
+      int mqttConnected = esp_status["MQTT_status"].as<int>();
+
+      if (wifiConnected == 1){
+        lcd.setCursor(0,1);
+        lcd.print("WiFi Connected!!");
+
+        if (mqttConnected == 1){
+          lcd.setCursor(0,1);
+          lcd.print("MQTT Connected!!");
+        } else {
+          lcd.setCursor(0,1);
+          lcd.print("MQTT Failed!!!");
+        }
+        
+      } else {
+        lcd.setCursor(0,1);
+        lcd.print("WiFi Failed!!!");
+      }
+    }
   }
 
   
