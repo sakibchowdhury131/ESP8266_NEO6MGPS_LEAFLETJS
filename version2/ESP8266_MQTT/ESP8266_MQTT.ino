@@ -42,8 +42,6 @@ Adafruit_MQTT_Client mqtt(&client, HOST, PORT, USRNAME, KEY);
 /****************************** Topic **********************************************/
 /***********************************************************************************/
 
-Adafruit_MQTT_Publish _gps_lat = Adafruit_MQTT_Publish(&mqtt, USRNAME"/feeds/gpslat");
-Adafruit_MQTT_Publish _gps_lng = Adafruit_MQTT_Publish(&mqtt, USRNAME"/feeds/gpslng");
 Adafruit_MQTT_Publish _gps_lat_lng = Adafruit_MQTT_Publish(&mqtt, USRNAME"/feeds/gpslatlng/csv");
 
 
@@ -133,10 +131,7 @@ void loop() {
 
 
       char gpsbuffer[30];
-      char *p = gpsbuffer;
-      dtostrf(distance, 3, 4, p);         // Convert Distance to Home to a String Variable and add it to the buffer
-      p += strlen(p);
-      p[0] = ','; p++;                 
+      char *p = gpsbuffer;             
 
 
       dtostrf(latitude, 3, 6, p);                   // Convert GPSlat(latitude) to a String variable and add it to the buffer
@@ -147,11 +142,7 @@ void loop() {
       dtostrf(longitude, 3, 6, p);                   // Convert GPSlng(longitude) to a String variable and add it to the buffer
       p += strlen(p);
       p[0] = ','; p++;  
-
-
-      dtostrf(alt, 2, 1, p);                   // Convert GPSalt(altimeter) to a String variable and add it to the buffer
-      p += strlen(p);
-                                                                  
+                                  
       p[0] = 0;
 
       Serial.println(gpsbuffer);
