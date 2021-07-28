@@ -2,8 +2,7 @@
 #include <ArduinoJson.h>
 #include <LiquidCrystal.h>
 
-#define HOME_LAT 23.45
-#define HOME_LNG 91.18
+
 static const uint32_t GPSBaud = 9600;
 static const uint32_t COMPORTBaud = 115200;
 static const uint32_t ESPBaud = 115200;
@@ -47,11 +46,6 @@ void loop(){
         Serial1.print(latitude, 6);
         Serial1.print(F(","));
         Serial1.print(longitude, 6);
-        Serial1.print(F(","));
-        Serial1.print(alt, 6);
-        Serial1.print(F(","));
-        Serial1.println(distance, 6);
-        
         
 
         flag++; 
@@ -62,8 +56,6 @@ void loop(){
           StaticJsonDocument<400> doc;
           doc["latitude"] = latitude;
           doc["longitude"] = longitude;
-          doc["altitude"] = alt;
-          doc["distance"] = distance;
           serializeJson(doc, Serial3);
           Serial1.println("JSON msg sent");
           //lcd.clear();
